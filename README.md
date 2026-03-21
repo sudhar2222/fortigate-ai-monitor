@@ -123,27 +123,53 @@ Open `http://localhost:8000` and type alerts in the chat interface.
 
 ### Run via CLI (standalone)
 
-Edit the query in `root_agent.py` under `main()`:
-
-```python
-text="dev_adom / fgt-spoke / host down power issue"
-```
-
-Then run:
-
 ```bash
 python root_agent.py
 ```
 
-### Example Queries
+The agent will prompt you to enter the alert interactively:
 
 ```
-dev_adom / fgt-spoke / wan down
-dev_adom / fgt-spoke / BGP neighbor 10.0.0.1 down
-prod_adom / fgt-branch-01 / host down
-prod_adom / fgt-branch-01 / host down power issue
-dev_adom / fgt-spoke / overall health
+========================================
+  FortiManager Network Health Agent
+========================================
+Enter alert in the format:
+  <adom> / <device> / <alert type>
+
+Examples:
+  dev_adom / fgt-spoke / wan down
+  dev_adom / fgt-spoke / host down
+  dev_adom / fgt-spoke / host down power issue
+  dev_adom / fgt-spoke / BGP neighbor 10.0.0.1 down
+  dev_adom / fgt-spoke / overall health
+========================================
+
+Alert > dev_adom / fgt-spoke / host down power issue
 ```
+
+### Input Format
+
+All alerts must follow this exact format:
+
+```
+<adom> / <device> / <alert type>
+```
+
+| Field | Description | Example |
+|---|---|---|
+| `adom` | FortiManager ADOM name | `dev_adom` |
+| `device` | FortiGate device hostname | `fgt-spoke` |
+| `alert type` | Type of alert (see table below) | `wan down` |
+
+**Supported alert types:**
+
+| Alert Type | Checks Triggered |
+|---|---|
+| `wan down` | VPN + BGP |
+| `BGP neighbor <ip> down` | BGP only |
+| `host down` | Underlay ping + BGP |
+| `host down power issue` | BGP only |
+| `overall health` | Underlay → VPN → BGP |
 
 ---
 
