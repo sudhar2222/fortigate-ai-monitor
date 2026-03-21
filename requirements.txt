@@ -1,0 +1,5 @@
+google-adk
+requests
+pandas
+openpyxl
+urllib3
