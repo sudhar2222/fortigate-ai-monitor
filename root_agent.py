@@ -142,9 +142,28 @@ async def main():
     user_id = "sudhar"
     session_id = f"session_{uuid4().hex}"
 
+    print("\n========================================")
+    print("  FortiManager Network Health Agent")
+    print("========================================")
+    print("Enter alert in the format:")
+    print("  <adom> / <device> / <alert type>")
+    print()
+    print("Examples:")
+    print("  dev_adom / fgt-spoke / wan down")
+    print("  dev_adom / fgt-spoke / host down")
+    print("  dev_adom / fgt-spoke / host down power issue")
+    print("  dev_adom / fgt-spoke / BGP neighbor 10.0.0.1 down")
+    print("  dev_adom / fgt-spoke / overall health")
+    print("========================================\n")
+
+    user_input = input("Alert > ").strip()
+
+    if not user_input:
+        print("No input provided. Exiting.")
+        return
+
     session_service = InMemorySessionService()
 
-    # REQUIRED: create session first
     await session_service.create_session(
         app_name=app_name,
         user_id=user_id,
@@ -163,13 +182,11 @@ async def main():
         new_message=types.Content(
             role="user",
             parts=[
-                types.Part(
-                    text="dev_adom / fgt-spoke / host down power issue"
-                    
-                )
+                types.Part(text=user_input)
             ]
         )
     )
+
     
     final_summary = None
     tool_outputs = []
