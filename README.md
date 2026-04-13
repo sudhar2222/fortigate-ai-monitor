@@ -103,9 +103,9 @@ pip install google-adk requests pandas openpyxl streamlit
 
 Edit `session_manager.py`:
 ```python
-FMG_IP   = "x.x.x.x"
-USERNAME = "xxxxxxxx"
-PASSWORD = "xxxxxxxx"
+FMG_IP   = "192.168.10.10"
+USERNAME = "admin"
+PASSWORD = "admin"
 ```
 
 Edit `externalping_agent.py`:
@@ -133,6 +133,23 @@ adk web
 ```bash
 streamlit run streamlit_app.py
 ```
+
+---
+
+## UI — Working Example
+
+The Streamlit UI provides two modes: **Alert Mode** (structured dropdowns) and **Chat Mode** (free-text).
+
+**Example:** `dev_adom / fgt-spoke / bgp neighbor status changed to down`
+
+- Alert type detected → BGP check only triggered
+- BGP neighbor `10.10.1.1` found Established (Up/Down: `02:07:28`, 1 prefix received)
+- Agent summary: **Site health status: GOOD**
+
+![Streamlit UI Screenshot](screenshot.png)
+
+> Left panel: select ADOM, device, and alert type → click **Run Health Check**
+> Right panel: Agent Summary (with alert tag + elapsed time) + collapsible raw tool output
 
 ---
 
