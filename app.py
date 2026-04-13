@@ -4,7 +4,7 @@ from google.adk.sessions import InMemorySessionService
 from root_agent import root_agent
 
 APP_NAME = "fortimanager_health_agents"
-print("")
+
 # ADK Web needs a session service
 session_service = InMemorySessionService()
 

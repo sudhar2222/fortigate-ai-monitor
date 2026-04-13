@@ -4,10 +4,11 @@ import urllib3
 from google.adk.tools.function_tool import FunctionTool
 from session_manager import get_session, API_ENDPOINT
 
-# ===== TOOL FUNCTION =====
+urllib3.disable_warnings()
+
 def check_bgp_status(adom: str, device: str):
     SESSION = get_session()
-    print("Root agent calls bgp agent..")
+
     run = {
         "id": 1,
         "method": "exec",
@@ -17,20 +18,16 @@ def check_bgp_status(adom: str, device: str):
             "data": {
                 "adom": adom,
                 "script": "checkbgp",
-                "scope": [{
-                    "name": device,
-                    "vdom": "root"
-                }]
+                "scope": [{"name": device, "vdom": "root"}]
             }
         }]
     }
 
     r = requests.post(API_ENDPOINT, json=run, verify=False).json()
     task_id = r["result"][0]["data"]["task"]
+    expected_log_id = task_id * 10
 
-    time.sleep(10)
-
-    log = {
+    log_req = {
         "id": 1,
         "method": "get",
         "session": SESSION,
@@ -39,18 +36,30 @@ def check_bgp_status(adom: str, device: str):
         }]
     }
 
-    out = requests.post(API_ENDPOINT, json=log, verify=False).json()
-    data = out["result"][0]["data"]
+    time.sleep(25)
 
-    
+    max_wait = 60
+    interval = 5
+    elapsed  = 0
+    data     = {}
 
-    if (data.get("log_id") != task_id * 10) and (data.get("script_name") != "checkbgp"):
-        return {"status": "error", "reason": "log mismatch"}
+    while elapsed < max_wait:
+        out  = requests.post(API_ENDPOINT, json=log_req, verify=False).json()
+        data = out["result"][0]["data"]
+
+        if data.get("log_id") == expected_log_id and data.get("script_name") == "checkbgp":
+            return {
+                "status": "success",
+                "output": data.get("content", "")
+            }
+
+        time.sleep(interval)
+        elapsed += interval
 
     return {
-        "status": "success",
-        "output": data.get("content", "")
+        "status": "timeout",
+        "output": data.get("content", ""),
+        "reason": f"log_id mismatch after {max_wait}s. got={data.get('log_id')} expected={expected_log_id}"
     }
 
-# ===== TOOL REGISTRATION =====
 check_bgp_tool = FunctionTool(check_bgp_status)

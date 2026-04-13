@@ -2,7 +2,7 @@ import requests
 from google.adk.tools.function_tool import FunctionTool
 from config_resolver import get_wan_gateway
 
-API_KEY = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" #replace the your own api key 
+API_KEY = "lFHPvuJqvEuaD0dTY4SuHymlFLeuQYeb"
 PING_API = "https://api.geekflare.com/ping"
 
 
